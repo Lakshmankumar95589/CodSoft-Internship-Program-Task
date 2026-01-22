@@ -1,0 +1,158 @@
+#include <iostream> 
+#include <vector> 
+#include <string> 
+using namespace std; 
+struct Book { 
+    string title; 
+    string author; 
+    string isbn; 
+    bool isIssued; 
+}; 
+// Structure to store transaction details 
+struct Transaction { 
+    string isbn; 
+    int daysLate; 
+}; 
+void addBook(vector<Book>& books); 
+void displayBooks(const vector<Book>& books); 
+void searchBook(const vector<Book>& books); 
+void checkoutBook(vector<Book>& books); 
+void returnBook(vector<Book>& books); 
+double calculateFine(int daysLate); 
+int main() { 
+    vector<Book> books; 
+    int choice; 
+    cout << "==========================================" << endl; 
+    cout << "        LIBRARY MANAGEMENT SYSTEM          " << endl; 
+    cout << "==========================================" << endl; 
+    do { 
+        cout << "\nMenu Options:" << endl; 
+        cout << "1. Add Book" << endl; 
+        cout << "2. View All Books" << endl; 
+        cout << "3. Search Book" << endl; 
+        cout << "4. Checkout Book" << endl; 
+        cout << "5. Return Book" << endl; 
+        cout << "6. Exit" << endl; 
+        cout << "Enter your choice (1-6): "; 
+        cin >> choice; 
+        cin.ignore(); 
+        switch (choice) { 
+            case 1: 
+                addBook(books); 
+                break; 
+            case 2: 
+                displayBooks(books); 
+                break; 
+            case 3: 
+                searchBook(books); 
+                break; 
+            case 4: 
+                checkoutBook(books); 
+                break; 
+            case 5: 
+                returnBook(books); 
+                break; 
+            case 6: 
+                cout << "Exiting Library Management System..." << endl; 
+                break; 
+            default: 
+                cout << "Invalid choice! Please try again." << endl; 
+        } 
+    } while (choice != 6); 
+    cout << "\n Thank you for using the Library Management System!" << endl; 
+    return 0; 
+} 
+// Function to add a new book 
+void addBook(vector<Book>& books) { 
+    Book newBook; 
+    cout << "Enter book title: "; 
+    getline(cin, newBook.title); 
+    cout << "Enter author name: "; 
+    getline(cin, newBook.author); 
+    cout << "Enter ISBN: "; 
+    getline(cin, newBook.isbn); 
+    newBook.isIssued = false; 
+    books.push_back(newBook); 
+    cout << "Book added successfully!" << endl; 
+} 
+// Function to display all books 
+void displayBooks(const vector<Book>& books) { 
+    if (books.empty()) { 
+        cout << "No books available in the library." << endl; 
+        return; 
+    } 
+    cout << "\n Book List:\n"; 
+    for (size_t i = 0; i < books.size(); i++) { 
+        cout << "\n Book " << i + 1 << endl; 
+        cout << "Title: " << books[i].title << endl; 
+        cout << "Author: " << books[i].author << endl; 
+        cout << "ISBN: " << books[i].isbn << endl; 
+        cout << "Status: " << (books[i].isIssued ? "Issued" : "Available") << endl; 
+    } 
+} 
+// Function to search a book 
+void searchBook(const vector<Book>& books) { 
+    string key; 
+    cout << "Enter Title / Author / ISBN to search: "; 
+    getline(cin, key); 
+    bool found = false; 
+    for (const auto& book : books) { 
+        if (book.title == key || book.author == key || book.isbn == key) { 
+            cout << "\n Book Found!" << endl; 
+            cout << "Title: " << book.title << endl; 
+            cout << "Author: " << book.author << endl; 
+            cout << "ISBN: " << book.isbn << endl; 
+            cout << "Status: " << (book.isIssued ? "Issued" : "Available") << endl; 
+            found = true; 
+        } 
+    } 
+    if (!found) 
+        cout << "Book not found!" << endl; 
+} 
+// Function to checkout a book 
+void checkoutBook(vector<Book>& books) { 
+    string isbn; 
+    cout << "Enter ISBN of book to checkout: "; 
+    getline(cin, isbn); 
+    for (auto& book : books) { 
+        if (book.isbn == isbn) { 
+            if (book.isIssued) { 
+                cout << "Book is already issued!" << endl; 
+            } else { 
+                book.isIssued = true; 
+                cout << "Book successfully checked out!" << endl; 
+            } 
+            return; 
+        } 
+    } 
+    cout << "Book not found!" << endl; 
+} 
+void returnBook(vector<Book>& books) { 
+    string isbn; 
+    int daysLate; 
+    cout << "Enter ISBN of book to return: "; 
+    getline(cin, isbn); 
+    for (auto& book : books) { 
+        if (book.isbn == isbn) { 
+            if (!book.isIssued) { 
+                cout << "Book was not issued!" << endl; 
+                return; 
+            } 
+            cout << "Enter number of days late (0 if on time): "; 
+            cin >> daysLate; 
+            double fine = calculateFine(daysLate); 
+            book.isIssued = false; 
+            cout << "Book returned successfully!" << endl; 
+            cout << "Fine amount: ₹" << fine << endl; 
+            return; 
+        } 
+    } 
+    cout << "Book not found!" << endl; 
+} 
+// Function to calculate fine 
+double calculateFine(int daysLate) { 
+    double finePerDay = 5.0; 
+    if (daysLate <= 0) 
+        return 0.0; 
+    return daysLate * finePerDay; 
+}
