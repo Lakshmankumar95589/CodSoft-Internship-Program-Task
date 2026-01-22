@@ -1,0 +1,101 @@
+#include <iostream> 
+using namespace std; 
+ 
+// Global 3x3 game board 
+char board[3][3]; 
+ 
+// Function to initialize the board 
+void initializeBoard() { 
+    char value = '1'; 
+    for (int i = 0; i < 3; i++) { 
+        for (int j = 0; j < 3; j++) { 
+            board[i][j] = value++; 
+        } 
+    } 
+} 
+ 
+// Function to display the board 
+void displayBoard() { 
+    cout << "\n Current Game Board:\n\n"; 
+    for (int i = 0; i < 3; i++) { 
+        cout << " "; 
+        for (int j = 0; j < 3; j++) { 
+            cout << board[i][j]; 
+            if (j < 2) 
+                cout << " | "; 
+        } 
+        if (i < 2) 
+            cout << "\n---|---|---\n"; 
+    } 
+    cout << endl; 
+} 
+// Function to update the board 
+bool updateBoard(int choice, char player) { 
+    int row = (choice - 1) / 3; 
+    int col = (choice - 1) % 3; 
+    if (board[row][col] != 'X' && board[row][col] != 'O') { 
+        board[row][col] = player; 
+        return true; 
+    } 
+    return false; 
+} 
+ 
+// Function to check win condition 
+bool checkWin(char player) { 
+    for (int i = 0; i < 3; i++) { 
+        if (board[i][0] == player && board[i][1] == player && board[i][2] == player) 
+            return true; 
+        if (board[0][i] == player && board[1][i] == player && board[2][i] == player) 
+            return true; 
+    } 
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player) 
+        return true; 
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player) 
+        return true; 
+    return false; 
+} 
+// Function to check draw 
+bool checkDraw() { 
+    for (int i = 0; i < 3; i++) 
+        for (int j = 0; j < 3; j++) 
+            if (board[i][j] != 'X' && board[i][j] != 'O') 
+                return false; 
+    return true; 
+} 
+int main() { 
+    char currentPlayer; 
+    int choice; 
+    char playAgain; 
+    cout << "====================================\n"; 
+    cout << "        TIC - TAC - TOE GAME         \n"; 
+    cout << "====================================\n"; 
+    do { 
+        initializeBoard(); 
+        currentPlayer = 'X'; 
+        while (true) { 
+            displayBoard(); 
+            cout << "\n Player " << currentPlayer << ", enter your move (1-9): "; 
+            cin >> choice; 
+            if (choice < 1 || choice > 9 || !updateBoard(choice, currentPlayer)) { 
+                cout << "Invalid move! Try again.\n"; 
+                continue; 
+            } 
+            if (checkWin(currentPlayer)) { 
+                displayBoard(); 
+                cout << "\n               Player " << currentPlayer << " wins the game! \n"; 
+                break; 
+            } 
+            if (checkDraw()) { 
+                displayBoard(); 
+                cout << "\n               The game is a draw!  \n"; 
+                break; 
+            } 
+            // Switch player 
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X'; 
+        } 
+        cout << "\n Do you want to play again? (y/n): "; 
+        cin >> playAgain; 
+    } while (playAgain == 'y' || playAgain == 'Y'); 
+    cout << "\n Thank you for playing Tic-Tac-Toe! \n"; 
+    return 0; 
+}
